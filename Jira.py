@@ -96,7 +96,7 @@ class jbase():
          summary=self._issue().fields.summary
          self.fmt('摘要',summary.encode('utf-8'))
          
-##获取未读邮件主题，是否包含JIRA
+##获取未读邮件主题
 def getMail(host, username, password, port=993):
       try:
           serv = imaplib.IMAP4_SSL(host, port)
