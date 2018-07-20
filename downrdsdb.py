@@ -44,7 +44,7 @@ def getdate():
 #region_provider.user_config_endpoints
 
 def downfullbackupfile(DBInstanceId,dbname):
-    clt = client.AcsClient('LTAIdXvY80BT2B0S','7Taui0vs9rGTqc45gP5x1wqyooEjgX','cn-beijing') #这里的地区ID非必须的
+    clt = client.AcsClient('LTAIdXB0S','7Taui0vs9rP5x1wqyooEjgX','cn-beijing') #这里的地区ID非必须的
     request = DescribeBackupsRequest.DescribeBackupsRequest()
     today,yesterday = getdate()
     ## 以下请求的参数都是必须的 尤其实例名和查询区间
@@ -79,18 +79,12 @@ def downfullbackupfile(DBInstanceId,dbname):
         print(e.get_error_msg())
 def main():
     DBDIC=[
-        {'DBInstanceId':'rm-2zex2l38184h3485b','dbname':'订单系统'},
-        {'DBInstanceId':'rm-2zez49dhs9h4se1bu','dbname':'用户中心usercenter'},
-        {'DBInstanceId':'rm-2zea0im1wyh2r2m43','dbname':'催收master'},
-        {'DBInstanceId':'rm-2zev5ms2yu860e292','dbname':'hshc-log'},
-        {'DBInstanceId':'rm-2zed7m4gs6qz090g6','dbname':'优惠券'},
-        {'DBInstanceId':'rm-2zex2xy15vq04832c','dbname':'支付中心'},
-        {'DBInstanceId':'rm-2ze18n7pyi1j900oh','dbname':'结算master'},
-        {'DBInstanceId':'rm-2zeyjt47i3rw7t7g1','dbname':'花生代理人'},
-        {'DBInstanceId':'rm-2ze16067kx75zkn5l','dbname':'风控'},
-        {'DBInstanceId':'rm-2zevtk2agv1d1e6in','dbname':'新mdm'},
-        {'DBInstanceId':'rm-2zehh217415y797mt','dbname':'客户关系系统'},
-        {'DBInstanceId':'rm-2zenl3sn56ij5u7kn','dbname':'花生好车APP'},
+        {'DBInstanceId':'rm-2ze8184h3485b','dbname':'订单系统'},
+        {'DBInstanceId':'rm-2z9dhs9h4se1bu','dbname':'用户中心usercenter'},
+        {'DBInstanceId':'rm-2zea01wyh2r2m43','dbname':'催收master'},
+        {'DBInstanceId':'rm-','dbname':'hshc-log'},
+        {'DBInstanceId':'rm-2zegs6qz090g6','dbname':'优惠券'}
+
     ]
     for dbs in DBDIC:
        downfullbackupfile(**dbs)
