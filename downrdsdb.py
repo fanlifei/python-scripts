@@ -96,6 +96,14 @@ def getdate():
     yesterday=(datetime.date.today() - datetime.timedelta(1)).strftime(_ISO8601_DATE_FORMAT)
     return today,yesterday
 
+##获取binlog 备份日期
+def binlogback_getdate():
+    _ISO8601_DATE_FORMAT = "%Y-%m-%dT00:00:00Z"
+    today=datetime.date.today().strftime(_ISO8601_DATE_FORMAT)
+    yesterday=(datetime.date.today() - datetime.timedelta(1)).strftime(_ISO8601_DATE_FORMAT)
+    return today,yesterday
+
+
 ###下载数据备份文件
 def downfullbackupfile(DBInstanceId,dbname):
     logger = logg(backpath)
@@ -143,6 +151,48 @@ def downfullbackupfile(DBInstanceId,dbname):
         logger.error(e.get_error_msg())
         print(e.get_error_code())
         print(e.get_error_msg())
+##下载binlog 文件
+
+def downbinlogfile(DBInstanceId,dbname):
+    logger = logg(backpath)
+    clt = client.AcsClient('LTAIdXvY80BT2B0S','7Taui0vs9rGTqc45gP5x1wqyooEjgX','cn-beijing') #这里的地区ID非必须的
+    request = DescribeBinlogFilesRequest.DescribeBinlogFilesRequest()
+    today,yesterday = binlogback_getdate()
+    request.set_accept_format('json')
+    request.set_action_name('DescribeBinlogFiles')
+    request.set_DBInstanceId(DBInstanceId) # 你的实例ID
+    request.set_StartTime(yesterday)
+    request.set_EndTime(today)
+    try:
+        result = clt.do_action_with_exception(request)
+        if result:
+            json_rds = json.loads(result)
+            lists = json_rds['Items']['BinLogFile']
+            if len(lists)==0:
+                logger.error(u"%s %s 数据库没有binlog备份文件"%(yesterday,dbname))
+            for l in lists:
+                DownloadLink=l['DownloadLink']
+                HostInstanceID=l['HostInstanceID']
+                LogBeginTime=l['LogBeginTime']
+                LogEndTime=l['LogEndTime']
+                FileSize=l['FileSize']
+                LogBeginTime=datetime.datetime.strptime(LogBeginTime, '%Y-%m-%dT%H:%M:%SZ').strftime('%Y%m%d%H%M%S')
+                LogEndTime = datetime.datetime.strptime(LogEndTime, '%Y-%m-%dT%H:%M:%SZ').strftime('%Y%m%d%H%M%S')
+                filename = dbname+'_'+DBInstanceId+'_'+LogBeginTime+'_'+LogEndTime+'_'+str(HostInstanceID)
+                filename = '%s.tar.gz'%(filename)
+                backfullpath=os.path.join(backpath,'binlog',filename)
+                if not os.path.exists(os.path.dirname(backfullpath)):
+                    os.mkdir(os.path.dirname(backfullpath))
+                downLink(DownloadLink,backfullpath)
+                print(u"%s%s binlog备份完成"%(yesterday,dbname))
+                logger.info(u"%s  %s binlog备份完成,文件大小%sM"%(yesterday,filename,round(FileSize/1024/1024,2)))
+    except Exception as e:
+        logger.error(e.get_error_code())
+        logger.error(e.get_error_msg())
+        print(e.get_error_code())
+        print(e.get_error_msg())
+        
+        
 
 ##主函数
 def main():
@@ -154,7 +204,10 @@ def main():
         {'DBInstanceId':'rm-2zea0im1wyh2r2m43','dbname':'催收master'}
     ]
     for dbs in DBDIC:
+        #备份数据库
        downfullbackupfile(**dbs)
+       #备份binlog
+       downbinlogfile(**dbs)
     ##删除过期备份
     clean(defaultpath=backpath)
     ##获取
