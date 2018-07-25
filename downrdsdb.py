@@ -16,7 +16,7 @@ try:
 except Exception as e:
     print(e)
 try:
-    from aliyunsdkrds.request.v20140815 import DescribeBackupsRequest
+    from aliyunsdkrds.request.v20140815 import DescribeBackupsRequest,DescribeBinlogFilesRequest
 except Exception as e:
     print(e)
 
@@ -147,10 +147,9 @@ def downfullbackupfile(DBInstanceId,dbname):
                     logger.error(u"%s %s 数据库备份失败"%(yesterday,dbname))
 
     except Exception as e:
-        logger.error(e.get_error_code())
-        logger.error(e.get_error_msg())
-        print(e.get_error_code())
-        print(e.get_error_msg())
+        logger.error(e)
+        print(e)
+
 ##下载binlog 文件
 
 def downbinlogfile(DBInstanceId,dbname):
@@ -187,10 +186,8 @@ def downbinlogfile(DBInstanceId,dbname):
                 print(u"%s%s binlog备份完成"%(yesterday,dbname))
                 logger.info(u"%s  %s binlog备份完成,文件大小%sM"%(yesterday,filename,round(FileSize/1024/1024,2)))
     except Exception as e:
-        logger.error(e.get_error_code())
-        logger.error(e.get_error_msg())
-        print(e.get_error_code())
-        print(e.get_error_msg())
+        logger.error(e)
+        print(e)
         
         
 
