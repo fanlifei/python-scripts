@@ -155,7 +155,7 @@ def downfullbackupfile(DBInstanceId,dbname):
 
 def downbinlogfile(DBInstanceId,dbname):
     logger = logg(backpath)
-    clt = client.AcsClient('LTAIdXvY80BT2B0S','7Taui0vs9rGTqc45gP5x1wqyooEjgX','cn-beijing') #这里的地区ID非必须的
+    clt = client.AcsClient('LTAI0BT2B0S','7Taui0vs9rGTyooEjgX','cn-beijing') #这里的地区ID非必须的
     request = DescribeBinlogFilesRequest.DescribeBinlogFilesRequest()
     today,yesterday = binlogback_getdate()
     request.set_accept_format('json')
