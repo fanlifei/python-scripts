@@ -27,6 +27,8 @@ from aliyunsdkcore.profile import region_provider
 import logging
 import time
 import os
+import re
+
 
 
 
@@ -152,9 +154,10 @@ def downfullbackupfile(DBInstanceId,dbname):
 
 ##下载binlog 文件
 
+
 def downbinlogfile(DBInstanceId,dbname):
     logger = logg(backpath)
-    clt = client.AcsClient('LTAI0BT2B0S','7Taui0vs9rGTyooEjgX','cn-beijing') #这里的地区ID非必须的
+    clt = client.AcsClient('LTAIdXvY80BT2B0S','7Taui0vs9rGTqc45gP5x1wqyooEjgX','cn-beijing') #这里的地区ID非必须的
     request = DescribeBinlogFilesRequest.DescribeBinlogFilesRequest()
     today,yesterday = binlogback_getdate()
     request.set_accept_format('json')
@@ -175,19 +178,19 @@ def downbinlogfile(DBInstanceId,dbname):
                 LogBeginTime=l['LogBeginTime']
                 LogEndTime=l['LogEndTime']
                 FileSize=l['FileSize']
-                LogBeginTime=datetime.datetime.strptime(LogBeginTime, '%Y-%m-%dT%H:%M:%SZ').strftime('%Y%m%d%H%M%S')
-                LogEndTime = datetime.datetime.strptime(LogEndTime, '%Y-%m-%dT%H:%M:%SZ').strftime('%Y%m%d%H%M%S')
-                filename = dbname+'_'+DBInstanceId+'_'+LogBeginTime+'_'+LogEndTime+'_'+str(HostInstanceID)
-                filename = '%s.tar.gz'%(filename)
-                backfullpath=os.path.join(backpath,'binlog',filename)
-                if not os.path.exists(os.path.dirname(backfullpath)):
-                    os.mkdir(os.path.dirname(backfullpath))
-                downLink(DownloadLink,backfullpath)
+                ##正则匹配binlog文件
+                pat='/hostins%s/(.*)\?OSSAccessKeyId'%(str(HostInstanceID))
+                binfile=re.findall(pat,DownloadLink)
+                filename=''.join(binfile)
+                filename=os.path.join(backpath,'binlog',dbname,filename)
+                if not os.path.exists(os.path.dirname(filename)):
+                    os.makedirs(os.path.dirname(filename))
+                downLink(DownloadLink,filename)
                 print(u"%s%s binlog备份完成"%(yesterday,dbname))
                 logger.info(u"%s  %s binlog备份完成,文件大小%sM"%(yesterday,filename,round(FileSize/1024/1024,2)))
     except Exception as e:
         logger.error(e)
-        print(e)
+        print(e)                
         
         
 
