@@ -109,7 +109,7 @@ def binlogback_getdate():
 ###下载数据备份文件
 def downfullbackupfile(DBInstanceId,dbname):
     logger = logg(backpath)
-    clt = client.AcsClient('LTAIdXv2B0S','7TwqyooEjgX','cn-beijing') #这里的地区ID非必须的
+    clt = client.AcsClient('','','cn-beijing') #这里的地区ID非必须的
     request = DescribeBackupsRequest.DescribeBackupsRequest()
     today,yesterday = getdate()
     ## 以下请求的参数都是必须的 尤其实例名和查询区间
@@ -157,7 +157,7 @@ def downfullbackupfile(DBInstanceId,dbname):
 
 def downbinlogfile(DBInstanceId,dbname):
     logger = logg(backpath)
-    clt = client.AcsClient('LTAIdXvY80BT2B0S','7Taui0vs9rGTqc45gP5x1wqyooEjgX','cn-beijing') #这里的地区ID非必须的
+    clt = client.AcsClient('','','cn-beijing') #这里的地区ID非必须的
     request = DescribeBinlogFilesRequest.DescribeBinlogFilesRequest()
     today,yesterday = binlogback_getdate()
     request.set_accept_format('json')
