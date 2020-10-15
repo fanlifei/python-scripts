@@ -155,10 +155,10 @@ class MongoRest:
     
     
 if __name__=='__main__':
-    rst=MongoRest()
+    replSet=MongoRest()
     ##集群异常删除失败节点
-    rst.replSetGetStatus()
+    replSet.replSetGetStatus()
     time.sleep(5)
     ##增加节点
-    rst.AddreplSetList()
+    replSet.AddreplSetList()
 
